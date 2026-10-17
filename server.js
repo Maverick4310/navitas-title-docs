@@ -188,6 +188,10 @@ app.post("/api/upload", (req, res) => {
     const { slotType, sheetId } = req.body;
     if (slotType && !SLOT_TYPES.has(slotType)) return res.status(400).json({ ok: false, code: "slot", message: "That document type is not accepted here." });
     if (sheetId && !SF_ID.test(sheetId)) return res.status(400).json({ ok: false, code: "slot", message: "Choose the vehicle this document is for." });
+    // Refused before the file is saved, so a refused POA leaves no file behind (Salesforce checks again).
+    if (slotType && slotType.startsWith("POA") && req.body.notarized !== "true") {
+      return res.status(400).json({ ok: false, code: "notary", message: "Confirm the power of attorney is notarized before uploading it." });
+    }
     const type = sniffType(req.file.buffer);
     if (!type) return res.status(400).json({ ok: false, code: "type", message: "Only PDF, JPG and PNG files can be uploaded." });
     try {
