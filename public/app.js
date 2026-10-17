@@ -77,6 +77,7 @@ async function loadContext(first) {
   }
   context = body;
   renderDeal();
+  renderNeeds(body.reviewNote, body.reviewNoteAt);
   renderSlots(body.slots);
   renderRules(body.stateRules || []);
   if (first) {
@@ -96,6 +97,14 @@ function renderDeal() {
   if (c.expiresAt) bits.push("Link open until " + new Date(c.expiresAt).toLocaleDateString(undefined, { month: "long", day: "numeric" }));
   $("deal-meta").textContent = bits.join(" · ");
   $("contact").textContent = "Questions? Contact " + (c.contactName || "Navitas Credit LLC") + (c.contactEmail ? " at " + c.contactEmail : "") + ".";
+}
+
+// 2026-10 (Vendor Review Email) The Title Department's last request, above the slots.
+function renderNeeds(note, at) {
+  $("needs").classList.toggle("hidden", !note);
+  if (!note) return;
+  $("needs-text").textContent = note;
+  $("needs-when").textContent = at ? "Requested " + new Date(at).toLocaleDateString(undefined, { month: "long", day: "numeric" }) + " by the Navitas Title Department" : "";
 }
 
 function renderSlots(slots) {

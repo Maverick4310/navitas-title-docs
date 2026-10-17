@@ -136,3 +136,9 @@ h2 { font-size: 15px; margin: 26px 0 10px; }
 @media (prefers-reduced-motion: reduce) {
   .spinner { animation-duration: 3s; }
 }
+
+/* 2026-10 (Vendor Review Email) the Title Department's request */
+.needs { margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: var(--review-bg); color: var(--ink); border: 1px solid #f1d9b5; }
+.needs__title { margin: 0 0 6px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--review-ink); }
+.needs__text { margin: 0; white-space: pre-line; font-size: 14px; overflow-wrap: anywhere; }
+.needs__when { margin-top: 8px; }
