@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Navitas Credit LLC | Upload Titling Documents</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="top">
+      <img class="logo" src="/navitas-logo.png" alt="Navitas Credit" width="230" height="45" />
+      <span class="tagline">Achieve More Together</span>
+    </header>
+    <div class="band" aria-hidden="true"></div>
+
+    <main class="card" id="main" aria-live="polite">
+      <section class="state" id="loading">
+        <span class="spinner" aria-hidden="true"></span>
+        <p>Opening your secure upload link…</p>
+      </section>
+
+      <section class="state hidden" id="closed">
+        <h1 id="closed-title">This link is not available</h1>
+        <p class="muted" id="closed-message"></p>
+      </section>
+
+      <section class="hidden" id="ready">
+        <p class="eyebrow">Titling documents</p>
+        <h1 id="deal-title">Upload titling documents</h1>
+        <p class="muted" id="deal-meta"></p>
+
+        <div class="drop" id="drop" tabindex="0" role="button" aria-describedby="drop-hint">
+          <input type="file" id="file" accept="application/pdf,image/jpeg,image/png" multiple class="visually-hidden" />
+          <svg class="drop__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l5 5h-3v6h-4V8H7l5-5zm-7 14h14v4H5v-4z"/></svg>
+          <p class="drop__title">Drop files here or <span class="link">choose files</span></p>
+          <p class="muted small" id="drop-hint">One combined PDF of the whole package is fine, or separate files. PDF, JPG or PNG, up to 25 MB each.
+            We read each document, file it for you and tell you right away if anything is missing or needs fixing.</p>
+        </div>
+
+        <ul class="uploads" id="uploads" aria-label="Your uploads"></ul>
+
+        <h2>What each vehicle still needs</h2>
+        <div id="vehicles"></div>
+
+        <p class="muted small foot" id="contact"></p>
+      </section>
+    </main>
+
+    <footer class="legal">
+      <p>Navitas Credit LLC · navitascredit.com</p>
+      <p>This page only accepts files. It never shows documents already on the deal.</p>
+    </footer>
+  </div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

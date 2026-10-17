@@ -1,0 +1,19 @@
+{
+  "name": "navitas-title-docs",
+  "version": "1.0.0",
+  "description": "Vendor upload page for a deal's titling documents. Relays to Salesforce (TitleVendorUploadRest) as an integration user.",
+  "type": "module",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test node --test test/"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "multer": "^2.0.2"
+  }
+}
