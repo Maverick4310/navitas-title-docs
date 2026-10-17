@@ -26,6 +26,12 @@ const SF_API_VERSION = process.env.SF_API_VERSION || "62.0";
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const TOKEN = /^[0-9a-f]{64}$/;
 const FILE_ID = /^069[0-9A-Za-z]{12}([0-9A-Za-z]{3})?$/;
+const SF_ID = /^[0-9A-Za-z]{15}([0-9A-Za-z]{3})?$/;
+// 2026-10 (Vendor Slots) the single documents Salesforce accepts (TitleVendorUploadRest.SLOT_SCOPE)
+export const SLOT_TYPES = new Set([
+  "Title/MSO Front", "Title/MSO Back", "Guaranty of Title", "Lien Release", "Invoice / Bill of Sale",
+  "Driver's License", "Proof of Insurance", "POA - Buyer", "POA - Seller",
+]);
 
 // ── File types: by content, not by name ──────────────────────────────
 export function sniffType(buf) {
@@ -166,7 +172,7 @@ app.get("/api/link", async (req, res) => {
   }
 });
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_FILE_BYTES, files: 1, fields: 4 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_FILE_BYTES, files: 1, fields: 8 } });
 
 app.post("/api/upload", (req, res) => {
   if (!allow("up:" + req.ip, 40, 10 * 60 * 1000)) return tooMany(res);
@@ -178,6 +184,10 @@ app.post("/api/upload", (req, res) => {
     }
     if (!TOKEN.test(String(token || ""))) return badLink(res);
     if (!req.file) return res.status(400).json({ ok: false, code: "file", message: "Choose a file to upload." });
+    // 2026-10 (Vendor Slots) optional: one document for one slot instead of a package
+    const { slotType, sheetId } = req.body;
+    if (slotType && !SLOT_TYPES.has(slotType)) return res.status(400).json({ ok: false, code: "slot", message: "That document type is not accepted here." });
+    if (sheetId && !SF_ID.test(sheetId)) return res.status(400).json({ ok: false, code: "slot", message: "Choose the vehicle this document is for." });
     const type = sniffType(req.file.buffer);
     if (!type) return res.status(400).json({ ok: false, code: "type", message: "Only PDF, JPG and PNG files can be uploaded." });
     try {
@@ -189,9 +199,12 @@ app.post("/api/upload", (req, res) => {
       const r = await sf("/services/apexrest/titlevendor/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, fileId, fileName: name }),
+        body: JSON.stringify({
+          token, fileId, fileName: name,
+          ...(slotType ? { slotType, sheetId: sheetId || null, notarized: req.body.notarized === "true", electronic: req.body.electronic === "true" } : {}),
+        }),
       });
-      console.log("upload:", mask(token), name, req.file.size, "bytes →", r.status);
+      console.log("upload:", mask(token), slotType || "package", name, req.file.size, "bytes →", r.status);
       return relay(res, r);
     } catch (e) {
       console.error("upload: failed", mask(token), e.message);

@@ -47,3 +47,9 @@ test("bad tokens are refused without calling Salesforce", async () => {
     server.close();
   }
 });
+
+test("slot uploads accept only the known document types", async () => {
+  const { SLOT_TYPES } = await import("../server.js");
+  assert.ok(SLOT_TYPES.has("POA - Buyer"));
+  assert.ok(!SLOT_TYPES.has("Title Package"));
+});

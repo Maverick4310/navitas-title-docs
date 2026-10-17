@@ -31,18 +31,24 @@
         <h1 id="deal-title">Upload titling documents</h1>
         <p class="muted" id="deal-meta"></p>
 
+        <h2>Have everything in one file?</h2>
         <div class="drop" id="drop" tabindex="0" role="button" aria-describedby="drop-hint">
           <input type="file" id="file" accept="application/pdf,image/jpeg,image/png" multiple class="visually-hidden" />
           <svg class="drop__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l5 5h-3v6h-4V8H7l5-5zm-7 14h14v4H5v-4z"/></svg>
-          <p class="drop__title">Drop files here or <span class="link">choose files</span></p>
-          <p class="muted small" id="drop-hint">One combined PDF of the whole package is fine, or separate files. PDF, JPG or PNG, up to 25 MB each.
-            We read each document, file it for you and tell you right away if anything is missing or needs fixing.</p>
+          <p class="drop__title">Drop the whole package here or <span class="link">choose files</span></p>
+          <p class="muted small" id="drop-hint">We read each document in the package, file it in the right place below and tell you
+            right away if anything is missing or needs fixing. PDF, JPG or PNG, up to 25 MB each.</p>
         </div>
+        <ul class="uploads" id="uploads" aria-label="Your package uploads"></ul>
 
-        <ul class="uploads" id="uploads" aria-label="Your uploads"></ul>
+        <h2>Or upload each document</h2>
+        <p class="muted small">These are the documents this deal needs. A tick means we have it.</p>
+        <div id="slots"></div>
 
-        <h2>What each vehicle still needs</h2>
-        <div id="vehicles"></div>
+        <section class="rules hidden" id="rules" aria-labelledby="rules-heading">
+          <h2 id="rules-heading">Titling state rules</h2>
+          <div id="rules-body"></div>
+        </section>
 
         <p class="muted small foot" id="contact"></p>
       </section>
