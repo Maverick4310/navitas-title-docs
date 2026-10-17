@@ -110,14 +110,14 @@ async function relay(res, sfRes) {
 const linkUrl = (token, file) =>
   `/services/apexrest/titlevendor/?token=${encodeURIComponent(token)}` + (file ? `&file=${encodeURIComponent(file)}` : "");
 
-async function saveFile(buf, name, mime) {
-  const form = new FormData();
-  form.append(
-    "entity_content",
-    new Blob([JSON.stringify({ Title: name.replace(/\.[^.]+$/, ""), PathOnClient: name })], { type: "application/json" })
-  );
-  form.append("VersionData", new Blob([buf], { type: mime }), name);
-  const r = await sf(`/services/data/v${SF_API_VERSION}/sobjects/ContentVersion`, { method: "POST", body: form });
+// Base64 JSON insert: Node's FormData sends every Blob as a file part, and Salesforce refuses a
+// multipart request with more than one. Files are capped at 25 MB, well inside the JSON limit.
+async function saveFile(buf, name) {
+  const r = await sf(`/services/data/v${SF_API_VERSION}/sobjects/ContentVersion`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ Title: name.replace(/\.[^.]+$/, ""), PathOnClient: name, VersionData: buf.toString("base64") }),
+  });
   if (!r.ok) throw new Error(`ContentVersion insert failed: HTTP ${r.status} ${(await r.text()).slice(0, 300)}`);
   const { id } = await r.json();
   const q = await sf(
@@ -185,7 +185,7 @@ app.post("/api/upload", (req, res) => {
       const check = await sf(linkUrl(token));
       if (!check.ok) return relay(res, check);
       const name = cleanName(req.file.originalname, type.ext);
-      const fileId = await saveFile(req.file.buffer, name, type.mime);
+      const fileId = await saveFile(req.file.buffer, name);
       const r = await sf("/services/apexrest/titlevendor/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
